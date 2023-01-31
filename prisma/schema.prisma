@@ -1,4 +1,4 @@
-// This is your Prisma schema file,
+// This is your Prisma schema file,npx prisma migrate dev
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -18,12 +18,12 @@ model User {
   firstName String @db.VarChar(200)
   lastName String @db.VarChar(200)
   email String @db.VarChar(100) @unique 
-  profilePicture String @db.VarChar(1000)
-  hash String @db.VarChar(100)
-  password String @db.VarChar(100)
+  profilePicture String? @db.VarChar(1000)
+  hash String? @db.VarChar(100)
+  password String? @db.VarChar(100)
   dob DateTime
   deleted Deleted @default(N)
-  createdAt DateTime
-  updatedAt DateTime
-  deletedAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
 }
