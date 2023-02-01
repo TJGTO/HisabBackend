@@ -1,22 +1,20 @@
 const { PrismaClient } = require("@prisma/client");
+const { v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcryptjs");
 const prisma = new PrismaClient();
 
 module.exports = class Userservice {
   constructor() {}
 
   async createUser(request) {
+    const hashSalt = bcrypt.genSaltSync(10);
+    const hashedpassword = bcrypt.hashSync(request.password, hashSalt);
+    request.id = uuidv4();
+    request.salt = hashSalt;
+    request.password = hashedpassword;
+    request.dob = new Date(request.dob);
     const user = await prisma.user.create({
-      data: {
-        id: "ksehf89789sg789",
-        firstName: "Elon",
-        lastName: "Mask",
-        email: "Elon.Mask@gmail.com",
-        profilePicture: "",
-        hash: "",
-        password: "",
-        dob: new Date(),
-        deleted: "N",
-      },
+      data: request,
     });
 
     return user;

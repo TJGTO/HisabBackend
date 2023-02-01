@@ -19,7 +19,7 @@ model User {
   lastName String @db.VarChar(200)
   email String @db.VarChar(100) @unique 
   profilePicture String? @db.VarChar(1000)
-  hash String? @db.VarChar(100)
+  salt String? @db.VarChar(100)
   password String? @db.VarChar(100)
   dob DateTime
   deleted Deleted @default(N)

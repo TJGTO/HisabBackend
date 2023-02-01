@@ -15,10 +15,7 @@ app.get("/error", (req, res, next) => {
   error.message = "Gand marao";
   next(error);
 });
-// app.get("/salt", (req, res) => {
-//   var salt = bcrypt.genSaltSync(10);
-//   var hash = bcrypt.hashSync("Bedo", salt);
-//   res.send({ salt, hash });
-// });
+
 app.use(globalErrorHandler);
+
 app.listen(8000, () => console.log("connected"));
