@@ -5,7 +5,11 @@ const prisma = new PrismaClient();
 
 module.exports = class Userservice {
   constructor() {}
-
+  /**
+   *
+   * @param {*} request
+   * @returns
+   */
   async createUser(request) {
     const hashSalt = bcrypt.genSaltSync(10);
     const hashedpassword = bcrypt.hashSync(request.password, hashSalt);
