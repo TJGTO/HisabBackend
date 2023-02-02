@@ -1,6 +1,9 @@
 const express = require("express");
 const globalErrorHandler = require("./utils/middlewares/globalErrorHandler");
+
 const app = express();
+
+require("dotenv").config();
 
 app.use(express.json({ limit: "100mb" }));
 
