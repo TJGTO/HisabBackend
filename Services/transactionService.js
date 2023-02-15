@@ -36,7 +36,11 @@ module.exports = class TrnsactionService {
 
     return transactiondetails;
   }
-
+  /**
+   * Get the details then group by doneBY column and get the total amount
+   * @param {*} request
+   * @returns
+   */
   async transactionComparisonWithOne(request) {
     const alltransactiondetails = await prisma.Transactions.findMany({
       where: {
@@ -51,19 +55,18 @@ module.exports = class TrnsactionService {
         transactionBenificiaries: true,
       },
     });
-    let result = [];
-    request.users.forEach((element) => {
-      let Obj = {};
-      Obj.user = element;
-      let arr = alltransactiondetails.filter((x) => x.doneBy == element);
-      let total = arr.reduce(
-        (accumulator, currentValue) =>
-          accumulator + currentValue.transactionBenificiaries[0].amount,
-        0
-      );
-      Obj.spend = total;
-      result.push(Obj);
-    });
+
+    const result = R.pipe(
+      R.groupBy((u) => u.doneBy),
+      R.map((v) =>
+        R.reduce(
+          (acc, item) => acc + item.transactionBenificiaries[0].amount,
+          0,
+          v
+        )
+      )
+    )(alltransactiondetails);
+
     return result;
   }
 };
