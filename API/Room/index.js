@@ -1,8 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const tokenVerification = require("../../utils/middlewares/tokenVerification");
 const requestValidator = require("../../utils/middlewares/requestValidator");
-// const { createUserSchema, loginSchema } = require("./validationSchema");
+const { createRoomSchema } = require("./validationSchema");
 
-router.post("/createRoom", require("./createRoom"));
+router.post(
+  "/createRoom",
+  tokenVerification,
+  requestValidator(createRoomSchema),
+  require("./createRoom")
+);
 
 module.exports = router;

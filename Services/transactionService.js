@@ -1,11 +1,12 @@
 const { PrismaClient } = require("@prisma/client");
+const R = require("ramda");
 const { v4: uuidv4 } = require("uuid");
 const prisma = new PrismaClient();
 
 module.exports = class TrnsactionService {
   constructor() {}
   /**
-   *create a user
+   *create a transaction
    * @param {*} request
    * @returns
    */
@@ -13,24 +14,26 @@ module.exports = class TrnsactionService {
     const users = request.users;
     request.id = uuidv4();
     delete request.users;
-    const transactiondetails = await prisma.Transactions.create({
-      data: request,
-    });
-    let requestBody = [];
-    users.forEach((element) => {
-      let Obj = {
+    const benificiaryMap = (x) => {
+      return {
         id: uuidv4(),
-        userId: element.id,
+        userId: x.id,
         amount: request.totalAmount / users.length,
-        trnsactionId: transactiondetails.id,
       };
-      requestBody.push(Obj);
+    };
+    const requestBody = R.map(benificiaryMap, users);
+    const transactiondetails = await prisma.Transactions.create({
+      data: {
+        ...request,
+        transactionBenificiaries: {
+          create: requestBody,
+        },
+      },
+      include: {
+        transactionBenificiaries: true,
+      },
     });
-    const mappedBenificiaries = await prisma.TBenificiaries.createMany({
-      data: requestBody,
-      skipDuplicates: true,
-    });
-    transactiondetails.mappedBenificiaries = mappedBenificiaries;
+
     return transactiondetails;
   }
 

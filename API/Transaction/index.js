@@ -1,10 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const tokenVerification = require("../../utils/middlewares/tokenVerification");
 const requestValidator = require("../../utils/middlewares/requestValidator");
-// const { createUserSchema, loginSchema } = require("./validationSchema");
+const { createTransactionSchema } = require("./validationSchema");
 
-router.post("/createTransaction", require("./createTransaction"));
+router.post(
+  "/createTransaction",
+  tokenVerification,
+  requestValidator(createTransactionSchema),
+  require("./createTransaction")
+);
 
-router.post("/comparison", require("./comparison"));
+router.post("/comparison", tokenVerification, require("./comparison"));
 
 module.exports = router;

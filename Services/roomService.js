@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const R = require("ramda");
 const { v4: uuidv4 } = require("uuid");
 const prisma = new PrismaClient();
 
@@ -13,22 +14,23 @@ module.exports = class RoomService {
     const users = request.users;
     request.id = uuidv4();
     delete request.users;
-    const roomDetails = await prisma.Room.create({
-      data: request,
-    });
-    let requestBody = [];
-    users.forEach((element) => {
-      let Obj = {
-        userId: element.id,
-        roomId: roomDetails.id,
+    const roomUserMap = (x) => {
+      return {
+        userId: x.id,
       };
-      requestBody.push(Obj);
+    };
+    const requestBody = R.map(roomUserMap, users);
+    const roomDetails = await prisma.Room.create({
+      data: {
+        ...request,
+        users: {
+          create: requestBody,
+        },
+      },
+      include: {
+        users: true,
+      },
     });
-    const mappedUsers = await prisma.RoomUserMap.createMany({
-      data: requestBody,
-      skipDuplicates: true,
-    });
-    roomDetails.mappedUsers = mappedUsers;
     return roomDetails;
   }
 };
