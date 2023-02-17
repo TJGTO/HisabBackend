@@ -21,4 +21,16 @@ const createTransactionSchema = yup.object({
   }),
 });
 
-module.exports = { createTransactionSchema };
+const getDetailsByDateRangeSchema = yup.object({
+  body: yup.object({
+    roomId: yup.string().required("Room is missing"),
+    users: yup
+      .array()
+      .min(1, "Please send atleast one user")
+      .required("Users are required"),
+    fromDate: yup.date().required("Please send the from date"),
+    toDate: yup.date().required("Please send the to date"),
+  }),
+});
+
+module.exports = { createTransactionSchema, getDetailsByDateRangeSchema };

@@ -56,7 +56,7 @@ module.exports = class TrnsactionService {
       },
     });
 
-    const result = R.pipe(
+    return R.pipe(
       R.groupBy((u) => u.doneBy),
       R.map((v) =>
         R.reduce(
@@ -66,7 +66,33 @@ module.exports = class TrnsactionService {
         )
       )
     )(alltransactiondetails);
+  }
 
-    return result;
+  /**
+   *
+   * @param {*} request
+   */
+  async transactionofUsersByDate(request) {
+    const alltransactiondetails = await prisma.Transactions.findMany({
+      where: {
+        AND: {
+          doneBy: {
+            in: request.users,
+          },
+          roomId: request.roomId,
+          createdAt: {
+            gte: new Date(request.fromDate),
+            lte: new Date(request.toDate),
+          },
+        },
+      },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
+    });
+
+    return alltransactiondetails;
   }
 };

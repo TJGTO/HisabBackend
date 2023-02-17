@@ -7,7 +7,7 @@ require("dotenv").config();
 
 app.use(express.json({ limit: "100mb" }));
 
-app.use(require("./API"));
+app.use(require("./api"));
 
 app.get("/", (req, res) => {
   res.send("Welcome");

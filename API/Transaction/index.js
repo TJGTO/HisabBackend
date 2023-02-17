@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const tokenVerification = require("../../utils/middlewares/tokenVerification");
 const requestValidator = require("../../utils/middlewares/requestValidator");
-const { createTransactionSchema } = require("./validationSchema");
+const {
+  createTransactionSchema,
+  getDetailsByDateRangeSchema,
+} = require("./validationSchema");
 
 router.post(
   "/createTransaction",
@@ -12,5 +15,12 @@ router.post(
 );
 
 router.post("/comparison", tokenVerification, require("./comparison"));
+
+router.post(
+  "/detailsbydate",
+  tokenVerification,
+  requestValidator(getDetailsByDateRangeSchema),
+  require("./transactionDetaildByDateRange")
+);
 
 module.exports = router;
